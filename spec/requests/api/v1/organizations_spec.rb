@@ -24,7 +24,7 @@ RSpec.describe "Api::V1::Organizations", type: :request do
 
       it "returns the created organization" do
         post api_v1_organizations_path, params: { organization: organization_params }
-        expect(json_body[:name]).to eq(organization_params[:name])
+        expect(json_body[:organization][:name]).to eq(organization_params[:name])
       end
     end
 
