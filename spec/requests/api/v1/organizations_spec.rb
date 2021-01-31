@@ -9,7 +9,7 @@ RSpec.describe "Api::V1::Organizations", type: :request do
 
     it "lists all organizations" do
       get api_v1_organizations_path
-      expect(json_body.size).to eq(3)
+      expect(json_body[:organizations].size).to eq(3)
     end
   end
 
