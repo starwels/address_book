@@ -1,6 +1,9 @@
 class Api::V1::RegistrationsController < ApplicationController
   def create
-    user = User.new(registration_params)
+    user = User.new(registration_params[:user])
+    organizations = Organization.where(id: registration_params[:organizations_ids])
+
+    user.organizations << organizations
 
     if user.save
       render json: { user: user }, status: :created
@@ -12,6 +15,6 @@ class Api::V1::RegistrationsController < ApplicationController
   private
 
   def registration_params
-    params.require(:registration).permit(:email)
+    params.require(:registration).permit(user: [:email], organizations_ids: [])
   end
 end
