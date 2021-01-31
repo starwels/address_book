@@ -15,7 +15,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
       it "returns the created user" do
         post api_v1_registrations_path, params: { registration: registration_params }
-        expect(json_body[:user][:name]).to eq(registration_params[:name])
+        expect(json_body[:user][:email]).to eq(registration_params[:email])
       end
     end
 
