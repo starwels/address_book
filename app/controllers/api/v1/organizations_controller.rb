@@ -1,4 +1,6 @@
 class Api::V1::OrganizationsController < ApplicationController
+  before_action :authenticate_admin!, only: :create
+
   def index
     organizations = Organization.all
 
@@ -19,5 +21,9 @@ class Api::V1::OrganizationsController < ApplicationController
 
   def organization_params
     params.require(:organization).permit(:name)
+  end
+
+  def authenticate_admin!
+    unauthorized_entity unless current_user.admin?
   end
 end
