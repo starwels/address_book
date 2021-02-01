@@ -3,6 +3,10 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { Faker::Internet.password }
 
+    trait :as_admin do
+      role { :admin }
+    end
+
     trait :with_organization do
       after(:build) do |user|
         user.organizations << create_list(:organization, 3)
