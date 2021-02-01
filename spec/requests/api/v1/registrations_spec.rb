@@ -11,7 +11,7 @@ RSpec.describe "Api::V1::Users", type: :request do
         {
           registration: {
             user: attributes_for(:user),
-            organizations_ids: organizations_ids
+            organizations_ids: organizations_ids,
           }
         }
       end
@@ -24,6 +24,11 @@ RSpec.describe "Api::V1::Users", type: :request do
       it "returns the created user" do
         post api_v1_registrations_path, params: registration_params
         expect(json_body[:user][:email]).to eq(registration_params[:registration][:user][:email])
+      end
+
+      it "returns the user token" do
+        post api_v1_registrations_path, params: registration_params
+        expect(json_body[:token]).to eq(JWT.encode({ sub: json_body[:user][:id] }, Rails.application.credentials.read))
       end
 
       it "has 3 associated organizations" do
@@ -54,6 +59,5 @@ RSpec.describe "Api::V1::Users", type: :request do
         expect(json_body).to include(:errors)
       end
     end
-
   end
 end
