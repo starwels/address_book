@@ -5,4 +5,10 @@ class User < ApplicationRecord
 
   validates :email, presence: true
   validates :organizations, presence: true
+
+  enum role: { user: 0, admin: 1 }
+
+  def admin?
+    role.eql?('admin')
+  end
 end
