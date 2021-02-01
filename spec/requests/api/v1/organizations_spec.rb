@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::Organizations", type: :request do
   end
 
   describe "POST /api/v1/organizations" do
-    let(:user) { create(:user, :with_organization) }
+    let(:user) { create(:user, :with_organization, :as_admin) }
     let(:headers) { { 'Authorization' => token_generator(user) } }
 
     context 'when params are valid' do
