@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :authentications, only: [:create]
+      resources :contacts, only: [:index, :create, :update, :destroy]
       resources :organizations, only: [:index, :create]
       resources :registrations, only: [:create]
     end
