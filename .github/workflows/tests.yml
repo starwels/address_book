@@ -12,6 +12,7 @@ env:
   RAILS_ENV: test
   POSTGRES_PASSWORD: postgres
   POSTGRES_USER: postgres
+  PROJECT_ID: ${{secrets.PROJECT_ID}}
 
 jobs:
   rubocop:
@@ -72,6 +73,16 @@ jobs:
       - name: Prepare database
         run: |
           bundle exec rake db:prepare
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Use gcloud CLI
+        run: gcloud info
 
       - name: Run tests
         run: bundle exec rspec
