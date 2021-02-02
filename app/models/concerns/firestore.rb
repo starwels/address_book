@@ -101,7 +101,7 @@ module Firestore
     end
 
     def firestore
-      @firestore ||= Google::Cloud::Firestore.new(project_id: ENV['PROJECT_ID'], credentials: ENV['GOOGLE_CREDENTIALS'])
+      @firestore ||= Google::Cloud::Firestore.new(project_id: ENV['PROJECT_ID'])
     end
   end
 
