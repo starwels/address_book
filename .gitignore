@@ -29,3 +29,6 @@
 .idea
 .generators
 .rspec
+key.json
+.env.local
+.env.test

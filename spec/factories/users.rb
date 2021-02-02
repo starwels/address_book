@@ -9,11 +9,11 @@ FactoryBot.define do
 
     trait :with_organization do
       after(:build) do |user|
-        user.organizations << create_list(:organization, 3)
+        user.organizations << create(:organization)
       end
 
       before(:create) do |user|
-        user.organizations << create_list(:organization, 3)
+        user.organizations << create(:organization)
       end
     end
   end
