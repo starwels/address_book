@@ -5,7 +5,7 @@ RSpec.describe "Api::V1::Organizations", type: :request do
   include RequestSpecHelper
 
   describe "GET /api/v1/organizations" do
-    let!(:organizations) { create_list(:organization, 3) }
+    let(:organizations) { create_list(:organization, 3) }
     let(:user) { create(:user, organizations: organizations) }
     let(:headers) { { 'Authorization' => token_generator(user) } }
 
@@ -46,6 +46,5 @@ RSpec.describe "Api::V1::Organizations", type: :request do
         expect(json_body).to include(:errors)
       end
     end
-
   end
 end
