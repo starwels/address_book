@@ -10,6 +10,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 gem 'rack-cors'
 gem 'bcrypt'
 gem 'jwt'
+gem "google-cloud-firestore"
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -18,6 +19,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'rspec-rails', '~> 4.0.2'
   gem 'faker'
+  gem 'dotenv-rails'
 end
 
 group :development do
