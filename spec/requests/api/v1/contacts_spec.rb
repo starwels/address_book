@@ -22,7 +22,7 @@ RSpec.describe "Contacts", type: :request do
 
   describe "GET /api/v1/contacts" do
     let!(:contacts) do
-      3.times do
+      2.times do
         contact = Contact.new(attributes_for(:contact, organization_id: organization.id))
         contact.save
       end
@@ -30,7 +30,7 @@ RSpec.describe "Contacts", type: :request do
 
     it "lists all contacts" do
       get api_v1_contacts_path, headers: headers, params: { organization_id: organization.id }
-      expect(json_body[:contacts].size).to eq(3)
+      expect(json_body[:contacts].size).to eq(2)
     end
   end
 
@@ -115,10 +115,15 @@ RSpec.describe "Contacts", type: :request do
     end
 
     context "when user does not belong to organization" do
+      let(:organization2) { create(:organization) }
       let(:contact) do
-        contact = Contact.new(attributes_for(:contact, organization_id: organization.id + 1))
+        contact = Contact.new(attributes_for(:contact, organization_id: organization2.id))
         contact.save
         contact
+      end
+
+      after do
+        contact.delete
       end
 
       it "returns status 401" do
