@@ -5,18 +5,19 @@ RSpec.describe "Api::V1::Organizations", type: :request do
   include RequestSpecHelper
 
   describe "GET /api/v1/organizations" do
-    let(:organizations) { create_list(:organization, 3) }
+    let(:organizations) { create_list(:organization, 2) }
     let(:user) { create(:user, organizations: organizations) }
     let(:headers) { { 'Authorization' => token_generator(user) } }
 
     it "lists all organizations" do
       get api_v1_organizations_path, headers: headers
-      expect(json_body[:organizations].size).to eq(3)
+      expect(json_body[:organizations].size).to eq(2)
     end
   end
 
   describe "POST /api/v1/organizations" do
-    let(:user) { create(:user, :with_organization, :as_admin) }
+    let(:user) { create(:user, :as_admin, organizations: [organization]) }
+    let(:organization) { create(:organization) }
     let(:headers) { { 'Authorization' => token_generator(user) } }
 
     context 'when params are valid' do
