@@ -41,3 +41,8 @@ unless File.exist?("#{Dir.pwd}/.env.local")
   puts "\n== Creating .env.local file =="
   FileUtils.cp("#{Dir.pwd}/.env", "#{Dir.pwd}/.env.local")
 end
+
+unless File.exist?("#{Dir.pwd}/.env.test")
+  puts "\n== Creating .env.test file =="
+  FileUtils.cp("#{Dir.pwd}/.env", "#{Dir.pwd}/.env.test")
+end

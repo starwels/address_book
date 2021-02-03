@@ -27,7 +27,7 @@ Both admin and user are under STRV organization.
 After that you have to paste the json key inside of key.json.  
 And paste the proper envs inside of .env.local and .env.test
 
-`PROJECT_ID=<>project_id`
+`PROJECT_ID=<project_id>`  
 `GOOGLE_APPLICATION_CREDENTIALS="./key.json"`
 
 ## Endpoints
