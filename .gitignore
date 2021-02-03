@@ -31,3 +31,4 @@
 .rspec
 key.json
 .env.local
+.env.test
