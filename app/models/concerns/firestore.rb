@@ -80,7 +80,11 @@ module Firestore
     end
 
     def collection_name
-      @collection_name ||= self.name.pluralize.downcase
+      if Rails.env.development?
+        @collection_name ||= 'dev'
+      else
+        @collection_name ||= self.name.pluralize.downcase
+      end
     end
 
     def list_by_association_id(id)
