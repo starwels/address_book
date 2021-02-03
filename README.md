@@ -2,7 +2,25 @@
 
 This app uses Ruby 2.7.2 and Rails ~> 6.1.1
 
-## Instructions
+## Deployed Backend
+
+Admin user
+
+`email: admin@strv.com`  
+`password: admin1`
+
+Regular user
+
+`user@strv.com`  
+`password: user11`
+
+Organization
+
+`name: STRV`
+
+And no contacts
+
+## Development Instructions
 
 To run this app locally you have to run in the project root.
 
