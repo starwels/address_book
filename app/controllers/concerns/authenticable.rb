@@ -1,10 +1,6 @@
 module Authenticable
   def encode_token(payload)
-    begin
-      JWT.encode(payload, Rails.application.credentials.read)
-    rescue JWT::EncodeError
-      nil
-    end
+    JWT.encode(payload, Rails.application.credentials.read)
   end
 
   def decoded_token
@@ -18,8 +14,7 @@ module Authenticable
   end
 
   def authenticate_user!
-    define_current_entity('current_user')
-
+    unauthorized_entity unless authenticate
   end
 
   def authenticate_admin!
@@ -36,7 +31,7 @@ module Authenticable
         user_id = decoded_token[0]['sub']
         User.find(user_id)
       rescue ActiveRecorde::NotFound, JWT::DecodeError, JWT::EncodeError
-        unauthorized_entity
+        nil
       end
     end
   end
@@ -47,20 +42,5 @@ module Authenticable
 
   def unauthorized_entity
     head(:unauthorized)
-  end
-
-  private
-
-  def define_current_entity(getter_name)
-    return if respond_to?(getter_name)
-
-    memoization_var_name = "@_#{getter_name}"
-    self.class.send(:define_method, getter_name) do
-      unless instance_variable_defined?(memoization_var_name)
-        resource = authenticate
-        instance_variable_set(memoization_var_name, resource)
-      end
-      instance_variable_get(memoization_var_name)
-    end
   end
 end

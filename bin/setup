@@ -31,3 +31,13 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Restarting application server =="
   system! 'bin/rails restart'
 end
+
+unless File.exist?("#{Dir.pwd}/key.json")
+  puts "\n== Creating key.json file =="
+  File.open("#{Dir.pwd}/key.json", "w+")
+end
+
+unless File.exist?("#{Dir.pwd}/.env.local")
+  puts "\n== Creating .env.local file =="
+  FileUtils.cp("#{Dir.pwd}/.env", "#{Dir.pwd}/.env.local")
+end

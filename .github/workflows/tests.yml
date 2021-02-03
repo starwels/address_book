@@ -3,7 +3,7 @@ name: Rails Tests
 on:
   pull_request:
     branches:
-      - master
+      - '*'
 
 env:
   RUBY_VERSION: 2.7.2
