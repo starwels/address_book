@@ -5,3 +5,16 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+
+ActiveRecord::Base.transaction do
+  organization = Organization.create!(name: 'STRV')
+
+  admin = User.new(email: "admin@strv.com", password: 'admin1', role: :admin)
+  admin.organizations.push(organization)
+  admin.save!
+
+  user = User.new(email: "user@strv.com", password: 'user11')
+  user.organizations.push(organization)
+  user.save!
+end
