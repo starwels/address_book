@@ -22,6 +22,10 @@ group :development, :test do
   gem 'dotenv-rails'
 end
 
+group :test do
+  gem 'database_cleaner-active_record'
+end
+
 group :development do
   gem 'listen', '~> 3.3'
   gem 'spring'
