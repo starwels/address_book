@@ -5,16 +5,21 @@ RSpec.describe "Contacts", type: :request do
   include RequestSpecHelper
 
   after(:each) do
-    contacts = Contact.list_by_association_id(organization.id)
+    contacts = Contact.list_by(:organization_id, organization.id)
     contacts.each do |contact|
-      contact_document = Contact.find_document(contact[:id])
+      contact_document = Contact.find(contact[:id])
       contact_document.delete
     end
   end
 
   let(:user) { create(:user, organizations: [organization]) }
   let(:organization) { create(:organization) }
-  let(:headers) { { 'Authorization' => token_generator(user) } }
+  let(:headers) do
+    {
+      'Authorization': token_generator(user),
+      'Content-Type': 'application/json',
+    }
+  end
 
   before do
     allow(Contact).to receive(:collection_name).and_return('testing')
@@ -39,12 +44,12 @@ RSpec.describe "Contacts", type: :request do
       let(:contact_params) { attributes_for(:contact, organization_id: organization.id) }
 
       it "returns status 201" do
-        post api_v1_contacts_path, headers: headers, params: { contact: contact_params }
+        post api_v1_contacts_path, headers: headers, params: contact_params.to_json
         expect(response).to have_http_status(201)
       end
 
       it "returns the created contact" do
-        post api_v1_contacts_path, headers: headers, params: { contact: contact_params }
+        post api_v1_contacts_path, headers: headers, params: contact_params.to_json
         expect(json_body[:contact][:name]).to eq(contact_params[:name])
       end
     end
@@ -53,12 +58,12 @@ RSpec.describe "Contacts", type: :request do
       let(:contact_params) { { name: nil, organization_id: organization.id } }
 
       it "returns status 422" do
-        post api_v1_contacts_path, headers: headers, params: { contact: contact_params }
+        post api_v1_contacts_path, headers: headers, params: contact_params.to_json
         expect(response).to have_http_status(422)
       end
 
       it "returns errors" do
-        post api_v1_contacts_path, headers: headers, params: { contact: contact_params }
+        post api_v1_contacts_path, headers: headers, params: contact_params.to_json
         expect(json_body).to include(:errors)
       end
     end
@@ -75,12 +80,12 @@ RSpec.describe "Contacts", type: :request do
       let(:contact_params) { attributes_for(:contact, organization_id: organization.id) }
 
       it "returns status 200" do
-        put api_v1_contact_path(contact.id), headers: headers, params: { contact: contact_params }
+        put api_v1_contact_path(contact.id), headers: headers, params: contact_params.to_json
         expect(response).to have_http_status(200)
       end
 
       it "returns the updated contact" do
-        put api_v1_contact_path(contact.id), headers: headers, params: { contact: contact_params }
+        put api_v1_contact_path(contact.id), headers: headers, params: contact_params.to_json
         expect(json_body[:contact][:name]).to eq(contact_params[:name])
       end
     end
@@ -89,12 +94,12 @@ RSpec.describe "Contacts", type: :request do
       let(:contact_params) { { name: nil, organization_id: organization.id } }
 
       it "returns status 422" do
-        put api_v1_contact_path(contact.id), headers: headers, params: { contact: contact_params }
+        put api_v1_contact_path(contact.id), headers: headers, params: contact_params.to_json
         expect(response).to have_http_status(422)
       end
 
       it "returns errors" do
-        put api_v1_contact_path(contact.id), headers: headers, params: { contact: contact_params }
+        put api_v1_contact_path(contact.id), headers: headers, params: contact_params.to_json
         expect(json_body).to include(:errors)
       end
     end

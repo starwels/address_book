@@ -11,17 +11,17 @@ class Api::V1::ContactsController < ApplicationController
     contact = Contact.new(contact_params)
 
     if contact.save
-      render json: { contact: contact.to_json }, status: :created
+      render json: { contact: contact.to_h }, status: :created
     else
       render json: { errors: contact.errors }, status: :unprocessable_entity
     end
   end
 
   def update
-    contact = Contact.find_document(params[:id])
+    contact = Contact.find(params[:id])
 
     if contact.update(contact_params)
-      render json: { contact: contact.to_json }, status: :ok
+      render json: { contact: contact.to_h }, status: :ok
     else
       render json: { errors: contact.errors }, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class Api::V1::ContactsController < ApplicationController
 
   def destroy
     organizations = current_user.organizations.all
-    contact = Contact.find_document(params[:id])
+    contact = Contact.find(params[:id])
 
     return render json: {}, status: :no_content if contact.nil?
     return unauthorized_entity if organizations.map(&:id).exclude?(contact.organization_id)

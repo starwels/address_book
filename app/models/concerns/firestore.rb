@@ -2,36 +2,30 @@ require "google/cloud/firestore"
 
 module Firestore
   extend ActiveSupport::Concern
+
   include ActiveModel::Validations
+  include ActiveModel::AttributeAssignment
+
   include Google::Cloud::Firestore
 
   def self.included(base)
     base.extend(ClassMethods)
   end
 
-  def to_json
-    {
-      id: @id,
-      name: @name,
-      email: @email,
-      phone: @phone,
-      organization_id: @organization_id
-    }
+  def attributes
+    self.class.instance_attributes.each_with_object({}) do |attribute, obj|
+      obj[:"#{attribute}"] = instance_variable_get("@#{attribute}")
+    end
   end
 
-  def get
-    doc = @document.get
-
-    if doc.data
-      response_to_accessors
-      return_response
-    end
+  def to_h
+    attributes
   end
 
   def save
     if valid?
       doc_ref = self.class.firestore.col(self.class.collection_name)
-      @document = doc_ref.add({ email: @email, name: @name, phone: @phone, organization_id: @organization_id.to_i })
+      @document = doc_ref.add(attributes.except(:id))
 
       response_to_accessors
       return_response
@@ -39,13 +33,10 @@ module Firestore
   end
 
   def update(attributes =  {})
-    attributes.each do |key, value|
-      instance_variable_set(:"@#{key}", value)
-    end
+    attributes = attributes.to_h.symbolize_keys
 
-    if self.class.belongs_to_klass
-      association_name = self.class.belongs_to_klass
-      attributes[:"#{association_name}_id"] = attributes[:"#{association_name}_id"].to_i
+    self.class.instance_attributes.each do |attribute|
+      instance_variable_set("@#{attribute}", attributes[attribute])
     end
 
     if valid?
@@ -65,18 +56,15 @@ module Firestore
   end
 
   def initialize(attributes = {})
-    attributes.each do |key, value|
-      instance_variable_set(:"@#{key}", value)
-    end
+    assign_attributes(attributes)
   end
 
   module ClassMethods
-    def belongs_to(klass)
-      @belongs_to_klass ||= klass
-    end
+    attr_reader :instance_attributes
 
-    def belongs_to_klass
-      @belongs_to_klass
+    def firestore_attributes(*attributes)
+      @instance_attributes = attributes
+      send(:attr_accessor, *attributes)
     end
 
     def collection_name
@@ -87,8 +75,8 @@ module Firestore
       end
     end
 
-    def list_by_association_id(id)
-      query = firestore.col(collection_name).where("#{@belongs_to_klass}_id".to_sym, :==, id)
+    def list_by(attribute, value)
+      query = firestore.col(collection_name).where(attribute.to_sym, :==, value)
       resources = []
       query.get do |resource|
         resources.push({ id: resource.document_id }.merge(resource.data))
@@ -97,10 +85,12 @@ module Firestore
       resources
     end
 
-    def find_document(id)
+    def find(id)
       document = firestore.doc("#{collection_name}/#{id}")
       if document.get.data
-        new({id: document.document_id, document: document}.merge(document.get.data))
+        object = new({id: document.document_id}.merge(document.get.data))
+        object.instance_variable_set(:@document, document)
+        object
       end
     end
 
@@ -109,17 +99,14 @@ module Firestore
     end
   end
 
+  private
+
   def response_to_accessors
     document_data = @document.get.data
 
-    @id ||= @document.document_id
-    @name ||= document_data[:name]
-    @email ||= document_data[:email]
-    @phone ||= document_data[:phone]
-    @organization_id ||= document_data[:organization_id]
+    assign_attributes(document_data)
+    assign_attributes(id: @document.document_id)
   end
-
-  private :response_to_accessors
 
   def return_response
     response = {
@@ -128,6 +115,4 @@ module Firestore
 
     response.merge(@document.get.data)
   end
-
-  private :return_response
 end
