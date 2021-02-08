@@ -4,6 +4,6 @@ class Organization < ApplicationRecord
   validates :name, presence: true
 
   def contacts
-    Contact.list_by_association_id(id)
+    Contact.list_by(:organization_id, id)
   end
 end
