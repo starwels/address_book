@@ -3,13 +3,11 @@ class Api::V1::RegistrationsController < ApplicationController
 
   def create
     user = User.new(registration_params[:user])
-    organizations = Organization.where(id: registration_params[:organizations_ids])
-
-    user.organizations << organizations
-
+    businesses = Business.where(id: registration_params[:business_ids])
+    user.businesses << businesses
     if user.save
       token = encode_token({ sub: user.id })
-      render json: { user: { id: user.id, email: user.email } , token: token }, status: :created
+      render json: { user: { id: user.id, email: user.email }, token: token }, status: :created
     else
       render json: { errors: user.errors }, status: :unprocessable_entity
     end
@@ -18,6 +16,6 @@ class Api::V1::RegistrationsController < ApplicationController
   private
 
   def registration_params
-    params.require(:registration).permit(user: [:email, :password], organizations_ids: [])
+    params.require(:registration).permit(user: [:email, :password], business_ids: [])
   end
 end
