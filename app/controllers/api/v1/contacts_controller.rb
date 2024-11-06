@@ -9,7 +9,6 @@ class Api::V1::ContactsController < ApplicationController
 
   def create
     contact = Contact.new(contact_params)
-
     if contact.save
       render json: { contact: contact.to_json }, status: :created
     else
@@ -19,7 +18,6 @@ class Api::V1::ContactsController < ApplicationController
 
   def update
     contact = Contact.find_document(params[:id])
-
     if contact.update(contact_params)
       render json: { contact: contact.to_json }, status: :ok
     else
@@ -28,12 +26,10 @@ class Api::V1::ContactsController < ApplicationController
   end
 
   def destroy
-    organizations = current_user.organizations.all
+    businesses = current_user.organizations.all
     contact = Contact.find_document(params[:id])
-
     return render json: {}, status: :no_content if contact.nil?
-    return unauthorized_entity if organizations.map(&:id).exclude?(contact.organization_id)
-
+    return unauthorized_entity if businesses.map(&:id).exclude?(contact.organization_id)
     contact.delete
   end
 
