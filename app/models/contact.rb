@@ -1,11 +1,8 @@
 class Contact
   include Firestore
-
   validates :email, presence: true
   validates :name, presence: true
-  validates :organization_id, presence: true
-
-  attr_accessor :id, :name, :email, :phone, :organization_id
-
-  belongs_to :organization
+  validates :business_id, presence: true
+  attr_accessor :id, :name, :email, :phone, :business_id
+  belongs_to :business
 end
