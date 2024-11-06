@@ -2,18 +2,16 @@ class Api::V1::OrganizationsController < ApplicationController
   before_action :authenticate_admin!, only: :create
 
   def index
-    organizations = Organization.all
-
-    render json: { organizations: organizations }, status: :ok
+    businesses = Organization.all
+    render json: { businesses: businesses }, status: :ok
   end
 
   def create
-    organization = Organization.new(organization_params)
-
-    if organization.save
-      render json: { organization: organization }, status: :created
+    business = Organization.new(organization_params)
+    if business.save
+      render json: { business: business }, status: :created
     else
-      render json: { errors: organization.errors }, status: :unprocessable_entity
+      render json: { errors: business.errors }, status: :unprocessable_entity
     end
   end
 
