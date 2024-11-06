@@ -10,3 +10,11 @@ Rails.application.routes.draw do
     end
   end
 end
+
+Rails.application.routes.draw do
+  namespace :api do
+    namespace :v1 do
+      resources :addresses, only: [:create]
+    end
+  end
+end
