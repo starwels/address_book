@@ -1,15 +1,14 @@
 class Api::V1::ContactsController < ApplicationController
-  before_action :set_organization, except: :destroy
-  before_action :check_organization, only: [:create, :update]
+  before_action :set_business, except: :destroy
+  before_action :check_business, only: [:create, :update]
 
   def index
-    contacts = @organization.contacts
+    contacts = @business.contacts
     render json: { contacts: contacts }
   end
 
   def create
     contact = Contact.new(contact_params)
-
     if contact.save
       render json: { contact: contact.to_json }, status: :created
     else
@@ -19,7 +18,6 @@ class Api::V1::ContactsController < ApplicationController
 
   def update
     contact = Contact.find_document(params[:id])
-
     if contact.update(contact_params)
       render json: { contact: contact.to_json }, status: :ok
     else
@@ -28,26 +26,24 @@ class Api::V1::ContactsController < ApplicationController
   end
 
   def destroy
-    organizations = current_user.organizations.all
+    businesses = current_user.businesses.all
     contact = Contact.find_document(params[:id])
-
     return render json: {}, status: :no_content if contact.nil?
-    return unauthorized_entity if organizations.map(&:id).exclude?(contact.organization_id)
-
+    return unauthorized_entity if businesses.map(&:id).exclude?(contact.business_id)
     contact.delete
   end
 
   private
 
   def contact_params
-    params.require(:contact).permit(:name, :email, :phone, :organization_id)
+    params.require(:contact).permit(:name, :email, :phone, :business_id)
   end
 
-  def check_organization
-    unauthorized_entity if @organization.nil?
+  def check_business
+    unauthorized_entity if @business.nil?
   end
 
-  def set_organization
-    @organization = current_user.organizations.find(params[:organization_id] || params[:contact][:organization_id])
+  def set_business
+    @business = current_user.businesses.find(params[:business_id] || params[:contact][:business_id])
   end
 end
